@@ -1,0 +1,29 @@
+listener:
+  protocol: "HTTP"
+  host: "0.0.0.0"
+  port: "8084"
+    
+reconnection:
+  connectionTimeout: "30000"
+  responseTimeout: "60000"
+  attempts: "3"
+  readTimeout: "30000"
+  reconnectionTimeout: "40000"
+  
+tlsContext:
+ keyStoreConfig:
+  alias : ""
+  path : "eversourceInternalDev.jks"
+    
+db:
+  galaxy:
+    storedProcedure: "CALL NST_IVR_CUSTOMER_UPDATE.UPDATE_BILLING_ADDRESS(:I_CHANNEL,:IVR_TRANS_ID,:I_ACT_NUMBER,:I_SERVICE_FLAG,:I_STREET_NUMBER,:I_STREET_NAME,:I_APT_NUMBER,:I_CITY,:I_STATE,:I_ZIP_CODE,:I_COUNTRY,:O_ERR_CODE,:O_ERR_MSG)"
+  
+getCustomercompanyGroup:
+ interfaceNumber : "ES0001"
+ interfaceName : "updateMailingAddress"
+ businessProcess: "Update Customer Information to legacy System (C2 and Galaxy)"
+ targetAppName: "CRDB"
+ sourceAppName: "Web"
+ businessIDType: "billingAccountId"   
+  

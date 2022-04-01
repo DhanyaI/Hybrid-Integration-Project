@@ -1,0 +1,10 @@
+ {
+  "transactionId": "12345678",
+  "code": 200,
+  "status": "SUCCESS",
+  "message": "Successfully Updated mailing address",
+  "details": "Free form description",
+  "requestTimestamp": "2020-10-20T12:34:56.000Z",
+  "responseTimestamp": "2020-10-20T12:34:57.000Z"
+ 
+}

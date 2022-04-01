@@ -1,0 +1,9 @@
+api:
+  apiId: "17714342"
+  
+db:
+  galaxy:
+    host: "glxpre12cscan.nu.com"
+    port: "1522"
+    username: "apps"
+    servicename: "PPROD"

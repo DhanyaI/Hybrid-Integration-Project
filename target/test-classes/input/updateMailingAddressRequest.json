@@ -1,0 +1,48 @@
+{
+  "messageHeaders": {
+    "sourceAppName": "Web/IVR",
+    "targetAppName": "C2 OR Galaxy",
+    "correlationId": "deret543234325fd",
+    "businessIDType": "Billing Account ID",
+    "businessIDValue": "56365",
+    "businessObjectType": "MailingAddress",
+    "processingType": "updateMailingAddress "
+  },
+  "customerGroup": {
+    "customerIdentification": {
+
+      "customerMailingAddress": {
+      "isBillingAddressDifferent": "N",
+      "addressLine1": "CEDAR RIDGE",
+      "addressSegmentType": "",
+      "unitNumber": "8",
+      "addressLine4": "CEDAR RIDGE",
+      "addressIdentifier": "",
+      "streetName": "abc star",
+      "streetSuffix": "",
+      "unitType": "3",
+      "streetPrefix": "as",
+      "floorNumber": "2",
+      "apartmentNumber": "401",
+      "streetDirection": "Opp Milk shop",
+      "nearestLandMark": "4 cross Road",
+      "buildingNumber": "4",
+      "streetTypeName": "Main Line",
+      "streetNumber": "4",
+      "postOfficeBox": "0001",
+      "siteID": "01",
+      "addressLine3": "CEDAR RIDGE",
+      "siteSeqNum": "01",
+      "country": "US",
+      "stateName": "CA",
+      "routeStop": "Next",
+      "addressCode": "400004",
+      "stateAbbreviation": "CA",
+      "addressLine2": "CEDAR RIDGE",
+      "postalCode": "400004",
+      "streetStatus": "Open",
+      "cityTownName": "NewYork"
+      }
+    }
+  }
+}

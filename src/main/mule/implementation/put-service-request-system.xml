@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	
+	<flow name="mf-put-service-request-system" doc:id="55c146bb-26f1-49a3-ad38-2e5ececa41f0" >
+		<ee:transform doc:name="DW Map Logging Properties" doc:id="3a551794-7630-414e-a68f-e6d72c3323c2">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable resource="dwls/v-environment.dwl" variableName="environment" />
+				<ee:set-variable resource="dwls/v-log-properties.dwl" variableName="logProperties" />
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log: Start" doc:id="5499c35f-d1eb-444d-8521-337912b7f26c" message='#[%dw 2.0&#10;output application/json&#10;---&#10; {&#10;	status : "START",&#10;	message : "Received request from IVR or Web application for Update Mailing Address"&#10;	} ++ (vars.logProperties default {})]' category="com.eversource.ei" />
+		<ee:transform doc:name="DW Map Galaxy Request" doc:id="192e57e4-7b58-4364-aa0a-647b450f39f4">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"I_CHANNEL": payload.messageHeaders.sourceAppName,
+	"IVR_TRANS_ID": payload.messageHeaders.businessIDValue,
+	"I_ACT_NUMBER": attributes.uriParams.billingAccountId,
+	"I_SERVICE_FLAG": 'Y',
+	"I_STREET_NUMBER": payload.customerGroup.customerIdentification.customerMailingAddress.streetNumber,
+	"I_STREET_NAME": payload.customerGroup.customerIdentification.customerMailingAddress.streetName,
+	"I_APT_NUMBER": payload.customerGroup.customerIdentification.customerMailingAddress.apartmentNumber,
+	"I_CITY": payload.customerGroup.customerIdentification.customerMailingAddress.cityTownName,
+	"I_STATE": payload.customerGroup.customerIdentification.customerMailingAddress.stateName,
+	"I_ZIP_CODE": payload.customerGroup.customerIdentification.customerMailingAddress.postalCode,
+	"I_COUNTRY": payload.customerGroup.customerIdentification.customerMailingAddress.country
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log: DB-Calling" doc:id="7dbd5835-b869-4eda-b2ab-d13c757aa018" category="com.eversource.ei" message="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	status : &quot;DB-CALLING&quot;,&#10;	message : &quot;Calling Galaxy Database.Stored Procedure: NST_IVR_CUSTOMER_UPDATE.UPDATE_BILLING_ADDRESS for host: &quot; ++ (Mule::p('db.galaxy.host') default '')&#10;	} ++ (vars.logProperties default {})]" />
+		<db:stored-procedure doc:name="Galaxy Store Procedure Call" doc:id="89e5a2e9-f146-4670-8998-d5f9443d2d53" config-ref="galaxy-db-configuration">
+			<db:sql><![CDATA[${db.galaxy.storedProcedure}
+	]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	"I_CHANNEL": payload.p_I_CHANNEL,
+	"IVR_TRANS_ID": payload.p_IVR_TRANS_ID,
+	"I_ACT_NUMBER": payload.p_I_ACT_NUMBER,
+	"I_SERVICE_FLAG": 'Y',
+	"I_STREET_NUMBER": payload.p_I_STREET_NUMBER,
+	"I_STREET_NAME": payload.p_I_STREET_NAME,
+	"I_APT_NUMBER": payload.p_I_APT_NUMBER,
+	"I_CITY": payload.p_I_CITY,
+	"I_STATE": payload.p_I_STATE,
+	"I_ZIP_CODE":payload.p_I_ZIP_CODE,
+	"I_COUNTRY": payload.p_I_COUNTRY
+}]]]></db:input-parameters>
+			<db:output-parameters>
+				<db:output-parameter key="O_ERR_CODE" type="VARCHAR" />
+				<db:output-parameter key="O_ERR_MSG" type="VARCHAR" />
+			</db:output-parameters>
+		</db:stored-procedure>
+		<logger level="INFO" doc:name="Log: RESP-Received" doc:id="1e44658b-2fe1-471d-91e7-3c82f08a6a02" category="com.eversource.ei" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	status : "RESP-RECEIVED",&#10;	message : "Response received from Galaxy Stored Procedure"&#10;	} ++ (vars.logProperties default {})]' />
+		<ee:transform doc:name="DW Map Galaxy Response" doc:id="f0fbe4c9-7093-4d16-b967-c3155c17d759">
+			<ee:message>
+				<ee:set-payload resource="dwls/p-apiResponse.dwl" />
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log: End" doc:id="a2e7b4db-a4b8-4568-ae2f-558fe90bffd1" message='#[%dw 2.0&#10;output application/json&#10;---&#10; {&#10;	status : "COMPLETED",&#10;	message : "Completed Processing. Sent Response back to Calling API"&#10;} ++ (vars.logProperties default {})]' category="com.eversource.ei" />
+	</flow>
+</mule>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+   <db:config name="galaxy-db-configuration" doc:name="Database Config" doc:id="95d3707d-cfa5-4976-bc48-fc8cbff804a3" >
+	  <db:oracle-connection host="#[vars.environment.host]" port="#[vars.environment.port]" user="#[vars.environment.username]" password="#[vars.environment.password]" serviceName="#[vars.environment.servicename]"/>
+   </db:config>
+    <http:listener-config name="sa0004-galaxy-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" readTimeout="${reconnection.readTimeout}" connectionIdleTimeout="${reconnection.connectionTimeout}" protocol="HTTPS" tlsContext="tls_context">
+			<reconnection >
+				<reconnect frequency="${reconnection.reconnectionTimeout}" count="${reconnection.attempts}" />
+			</reconnection>
+		</http:listener-connection>
+    </http:listener-config>
+   
+</mule>
+
+	

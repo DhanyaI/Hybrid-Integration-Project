@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+   
+    <flow name="sa0004-galaxy-main">
+        <http:listener config-ref="sa0004-galaxy-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="sa0004-galaxy-config" />
+    </flow>
+ 
+ <flow name="get:\api-status:sa0004-galaxy-config" doc:id="e7aaadef-b848-4b35-8089-56c005b6e9ec" >
+		<ee:transform doc:name="Transform Message" doc:id="0e2e2679-f83d-4d5a-aad8-60c5c8fe3549" >
+			<ee:message >
+				<ee:set-payload resource="dwls/p-apiStatus.dwl" />
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+	</flow>
+	
+ <flow name="put:\customers\billingAccounts\(billingAccountId)\mailing-address:application\json:sa0004-galaxy-config" doc:id="9147e11d-05c7-4766-8a29-b4053486e7d6" >
+		<flow-ref doc:name="Refer to mf-put-service-request-system" doc:id="67b6b9d6-338c-4ee2-8acb-3f329ef5e9bc" name="mf-put-service-request-system"/>
+	</flow>
+</mule>

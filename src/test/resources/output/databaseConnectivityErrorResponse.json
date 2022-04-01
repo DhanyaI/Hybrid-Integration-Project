@@ -1,0 +1,7 @@
+{
+	"status": "500 Internal Server Error",
+	"message": "An Internal error has occurred, Please contact your system administrator.",
+    "error": "DB:CONNECTIVITY",
+    "correlationId":"12325567358768",
+    "targetSystem" : "sa-work-studio-sa001"
+}

@@ -1,0 +1,8 @@
+tlsContext:
+  keyStoreConfig:
+    password: "![5wCyFNHGwh3yuliB1qXFHQ==]"
+    keyPassword: "![5wCyFNHGwh3yuliB1qXFHQ==]"
+    
+db:
+  galaxy:
+    password: "![/EQ8GIA7FteA/Tm6E+fkkA==]"

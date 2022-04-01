@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="sa-galaxy-sa0004-test-suite.xml" />
+	<munit:test name="sa0004-galaxy-test-suite-sa0004-galaxy-mainTest-Success" doc:id="b9be4272-0349-4c4d-9c10-3aaeb809950b" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock API Router Kit" doc:id="cb0dd683-b6d1-4546-939f-347fdd702a5c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sa0004-galaxy-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-call flow="put:\customers\billingAccounts\(billingAccountId)\mailing-address:application\json:sa0004-galaxy-config" />
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock System API HTTP Request" doc:id="f9a90b45-f669-4423-a813-ff885356fb1f" processor="db:stored-procedure">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Galaxy Store Procedure Call" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="89e5a2e9-f146-4670-8998-d5f9443d2d53" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('input/updateMailingAddressRequest.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="22794cc9-8b02-4b32-a80f-334389fc3791" >
+				<munit:payload value="#[MunitTools::getResourceAsString('input/updateMailingAddressRequest.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="f3c1d2c0-dada-4263-a7a1-e67a5601e5bf" >
+				<flow-ref doc:name="Flow-ref to sa0004-galaxy-main" doc:id="d1e81008-9af1-43e6-9a1c-dd98bfc9deec" name="sa0004-galaxy-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1afdcc02-bf69-4a9c-90c6-8bde0031ec5a" >
+						<logger level="INFO" doc:name="Logger :Error Continue" doc:id="22e6761f-c207-4e17-b91e-5c458e2b4be2" message="Error Continue"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="df7d2263-1a6f-4a95-aea3-c4f605117169" />
+		</munit:validation>
+	</munit:test>
+<munit:test name="sa0004-galaxy-test-suite-sa0004-galaxy-mainTest-Error-500" doc:id="fc4e8a8c-275a-46c2-8b51-1347a39477f1" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock API Router Kit" doc:id="444427f8-53db-41ee-be44-1cd950c0e474" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sa0004-galaxy-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('input/updateMailingAddressRequest.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+				<munit-tools:then-call flow="put:\customers\billingAccounts\(billingAccountId)\mailing-address:application\json:sa0004-galaxy-config" />
+			
+</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock System API HTTP Request" doc:id="34ff2a87-261b-467c-9de8-8d726d0194d3" processor="db:stored-procedure">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Galaxy Store Procedure Call" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="89e5a2e9-f146-4670-8998-d5f9443d2d53" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('output/databaseConnectivityErrorResponse.json')]" mediaType="application/json" />
+					<munit-tools:error typeId="DB:CONNECTIVITY" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="f47eb7b4-7ff0-4751-8760-1dcb93d9f16c" >
+				<munit:payload value="#[MunitTools::getResourceAsString('input/updateMailingAddressRequest.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="5b2a79b7-cdf1-4f8a-8ad9-4a88ec9d059c" >
+				<flow-ref doc:name="Flow-ref to sa0004-galaxy-main" doc:id="8a0cb0f6-b1e4-4600-95c7-c1a5b4ef5122" name="sa0004-galaxy-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="fc774e94-dab3-4ff6-8a67-bbf186a01d40" >
+						<logger level="INFO" doc:name="Logger :Error Continue" doc:id="fb68582f-5f73-4f88-9288-724f42b2569a" message="Error Continue"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="dc6e4e14-3e9f-4496-b708-be56812dc922" />
+		</munit:validation>
+	</munit:test>
+	
+	<munit:test name="sa0004-galaxy-test-suite-sa0004-galaxy-mainTest-apiStatus-Test" doc:id="d0461adf-4682-4a8c-9425-822519216a4e" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock API Router Kit" doc:id="05e7d068-4145-49da-8a70-dd38aeccc509" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sa0004-galaxy-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANY" />
+				</munit-tools:then-return>
+				<munit-tools:then-call flow="get:\api-status:sa0004-galaxy-config" />
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="a620ace5-74b4-4ab1-a0d8-48cd5e91084f" >
+				<flow-ref doc:name="Flow-ref to sa0004-galaxy-main" doc:id="33472ca2-69dc-45ae-bbcb-4e322f6c56e0" name="sa0004-galaxy-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="bb9b8171-2390-4e13-8e97-8a7179e15030" >
+						<logger level="INFO" doc:name="Logger :Error Continue" doc:id="5361dfda-840d-4e5a-815b-3126b6a64100" message="Error Continue"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="5da37b3d-e8f2-4729-b14c-f40f51ca7902" />
+		</munit:validation>
+	</munit:test>
+</mule>
